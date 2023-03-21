@@ -10,8 +10,8 @@ services:
       - ./data:/app/data
     command: npm run start
     ports:
-      - 3000:3000
+      - 5009:5009
     environment:
-      - PORT=3000
-      - WEBAPP_PORT=3000
+      - PORT=5009
+      - WEBAPP_PORT=5009
       - OPENAI_API_KEY=${OPENAI_API_KEY}

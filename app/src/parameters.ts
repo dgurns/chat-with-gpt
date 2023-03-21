@@ -9,6 +9,7 @@ export const defaultParameters: Parameters = {
 export function loadParameters(
 	id: string | null | undefined = null
 ): Parameters {
+	console.log('API KEY', process.env.OPENAI_API_KEY);
 	const apiKey =
 		process.env.OPENAI_API_KEY ||
 		localStorage.getItem('openai-api-key') ||
