@@ -9,100 +9,133 @@ import { useAppContext } from '../../context';
 import { backend } from '../../backend';
 import { Page } from '../page';
 
-const Message = React.lazy(() => import(/* webpackPreload: true */ '../message'));
+const Message = React.lazy(
+	() => import(/* webpackPreload: true */ '../message')
+);
 
 const Messages = styled.div`
-    max-height: 100%;
-    flex-grow: 1;
-    overflow-y: scroll;
-    display: flex;
-    flex-direction: column;
+	max-height: 100%;
+	flex-grow: 1;
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
 `;
 
 const EmptyMessage = styled.div`
-    flex-grow: 1;
-    padding-bottom: 5vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: "Work Sans", sans-serif;
-    line-height: 1.7;
-    gap: 1rem;
+	flex-grow: 1;
+	padding-bottom: 5vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Work Sans', sans-serif;
+	line-height: 1.7;
+	gap: 1rem;
 `;
 
 export default function ChatPage(props: any) {
-    const { id } = useParams();
-    const context = useAppContext();
+	const { id } = useParams();
+	const context = useAppContext();
 
-    useEffect(() => {
-        if (props.share || !context.currentChat.chatLoadedAt) {
-            return;
-        }
+	const messagesToDisplay = context.currentChat.messagesToDisplay;
+	const latestMessage =
+		messagesToDisplay.length > 0
+			? messagesToDisplay[messagesToDisplay.length - 1]
+			: undefined;
+	const latestMessageRole = latestMessage ? latestMessage.role : undefined;
+	const latestMessageLength = latestMessage ? latestMessage.content.length : 0;
 
-        const shouldScroll = (Date.now() - context.currentChat.chatLoadedAt) > 5000;
+	useEffect(() => {
+		if (props.share || !context.currentChat.chatLoadedAt) {
+			return;
+		}
 
-        if (!shouldScroll) {
-            return;
-        }
+		const shouldScroll = Date.now() - context.currentChat.chatLoadedAt > 5000;
 
-        const container = document.querySelector('#messages') as HTMLElement;
-        const messages = document.querySelectorAll('#messages .message');
+		if (!shouldScroll) {
+			return;
+		}
 
-        if (messages.length) {
-            const latest = messages[messages.length - 1] as HTMLElement;
-            const offset = Math.max(0, latest.offsetTop - 100);
-            setTimeout(() => {
-                container?.scrollTo({ top: offset, behavior: 'smooth' });
-            }, 500);
-        }
-    }, [context.currentChat?.chatLoadedAt, context.currentChat?.messagesToDisplay.length, props.share]);
+		const container = document.querySelector('#messages') as HTMLElement;
+		const totalScrollHeight = container.scrollHeight - container.offsetHeight;
+		const currentScrollPosition = container.scrollTop;
+		const currentScrollIsNearBottom =
+			currentScrollPosition > totalScrollHeight - 150;
 
-    const messagesToDisplay = context.currentChat.messagesToDisplay;
+		if (latestMessageLength && currentScrollIsNearBottom) {
+			container?.scrollTo({ top: totalScrollHeight, behavior: 'smooth' });
+		}
+	}, [
+		context.currentChat?.chatLoadedAt,
+		props.share,
+		context.currentChat.messagesToDisplay,
+		latestMessageLength,
+	]);
 
-    const shouldShowChat = id && context.currentChat.chat && !!messagesToDisplay.length;
+	const shouldShowChat =
+		id && context.currentChat.chat && !!messagesToDisplay.length;
 
-    return <Page id={id || 'landing'}
-        headerProps={{
-            share: context.isShare,
-            canShare: messagesToDisplay.length > 1,
-            title: (id && messagesToDisplay.length) ? context.currentChat.chat?.title : null,
-            onShare: async () => {
-                if (context.currentChat.chat) {
-                    const id = await backend.current?.shareChat(context.currentChat.chat);
-                    if (id) {
-                        const slug = context.currentChat.chat.title
-                            ? '/' + slugify(context.currentChat.chat.title.toLocaleLowerCase())
-                            : '';
-                        const url = window.location.origin + '/s/' + id + slug;
-                        navigator.share?.({
-                            title: context.currentChat.chat.title || undefined,
-                            url,
-                        });
-                    }
-                }
-            },
-        }}>
-        <Suspense fallback={<Messages id="messages">
-            <EmptyMessage>
-                <Loader variant="dots" />
-            </EmptyMessage>
-        </Messages>}>
-            <Messages id="messages">
-                {shouldShowChat && (
-                    <div style={{ paddingBottom: '4.5rem' }}>
-                        {messagesToDisplay.map((message) => (
-                            <Message key={message.id}
-                                message={message}
-                                share={props.share}
-                                last={context.currentChat.chat!.messages.leafs.some(n => n.id === message.id)} />
-                        ))}
-                    </div>
-                )}
-                {!shouldShowChat && <EmptyMessage>
-                    <Loader variant="dots" />
-                </EmptyMessage>}
-            </Messages>
-        </Suspense>
-    </Page>;
+	return (
+		<Page
+			id={id || 'landing'}
+			headerProps={{
+				share: context.isShare,
+				canShare: messagesToDisplay.length > 1,
+				title:
+					id && messagesToDisplay.length
+						? context.currentChat.chat?.title
+						: null,
+				onShare: async () => {
+					if (context.currentChat.chat) {
+						const id = await backend.current?.shareChat(
+							context.currentChat.chat
+						);
+						if (id) {
+							const slug = context.currentChat.chat.title
+								? '/' +
+								  slugify(context.currentChat.chat.title.toLocaleLowerCase())
+								: '';
+							const url = window.location.origin + '/s/' + id + slug;
+							navigator.share?.({
+								title: context.currentChat.chat.title || undefined,
+								url,
+							});
+						}
+					}
+				},
+			}}
+		>
+			<Suspense
+				fallback={
+					<Messages id="messages">
+						<EmptyMessage>
+							<Loader variant="dots" />
+						</EmptyMessage>
+					</Messages>
+				}
+			>
+				<Messages id="messages">
+					{shouldShowChat && (
+						<div style={{ paddingBottom: '4.5rem' }}>
+							{messagesToDisplay.map((message) => (
+								<Message
+									key={message.id}
+									message={message}
+									share={props.share}
+									last={context.currentChat.chat!.messages.leafs.some(
+										(n) => n.id === message.id
+									)}
+								/>
+							))}
+						</div>
+					)}
+					{!shouldShowChat && (
+						<EmptyMessage>
+							<Loader variant="dots" />
+						</EmptyMessage>
+					)}
+				</Messages>
+			</Suspense>
+		</Page>
+	);
 }
