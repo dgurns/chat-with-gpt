@@ -1,5 +1,13 @@
 # Chat with GPT
 
+## Quick Start for Running Locally
+
+1. Set an env variable for `export OPENAI_API_KEY=your-api-key` in your `.bashrc` or `.bash_profile`
+2. In this repo's root directory, run `make`
+3. The app will open in a new browser tab at `http://localhost:5009` (you may need to refresh after a few seconds)
+
+## About
+
 Chat with GPT is an open-source, unofficial ChatGPT app with extra features and more ways to customize your experience. It connects ChatGPT with ElevenLabs to give ChatGPT a realistic human voice.
 
 Try out the hosted version at: https://chatwithgpt.netlify.app

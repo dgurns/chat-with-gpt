@@ -7,7 +7,7 @@ export const defaultSystemPrompt = `
 You are a helpful assistant.
 `.trim();
 
-export const defaultModel = 'gpt-4';
+export const defaultModel = 'gpt-3.5-turbo';
 
 export interface OpenAIResponseChunk {
 	id?: string;

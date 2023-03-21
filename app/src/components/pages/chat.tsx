@@ -42,7 +42,6 @@ export default function ChatPage(props: any) {
 		messagesToDisplay.length > 0
 			? messagesToDisplay[messagesToDisplay.length - 1]
 			: undefined;
-	const latestMessageRole = latestMessage ? latestMessage.role : undefined;
 	const latestMessageLength = latestMessage ? latestMessage.content.length : 0;
 
 	useEffect(() => {
@@ -51,17 +50,14 @@ export default function ChatPage(props: any) {
 		}
 
 		const shouldScroll = Date.now() - context.currentChat.chatLoadedAt > 5000;
-
 		if (!shouldScroll) {
 			return;
 		}
 
 		const container = document.querySelector('#messages') as HTMLElement;
 		const totalScrollHeight = container.scrollHeight - container.offsetHeight;
-		const currentScrollPosition = container.scrollTop;
-
-		if (latestMessageLength) {
-			container?.scrollTo({ top: totalScrollHeight, behavior: 'smooth' });
+		if (latestMessageLength > 0) {
+			container.scrollTo({ top: totalScrollHeight, behavior: 'smooth' });
 		}
 	}, [
 		context.currentChat?.chatLoadedAt,
