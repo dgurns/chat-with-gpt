@@ -2,9 +2,11 @@
 
 ## Quick Start for Running Locally
 
-1. Set an env variable for `export OPENAI_API_KEY=your-api-key` in your `.bashrc` or `.bash_profile`
-2. In this repo's root directory, run `make`
-3. The app will open in a new browser tab at `http://localhost:5009` (you may need to refresh after a few seconds)
+1. Clone this repo to your computer
+2. Sign up for the [OpenAI API](https://openai.com/product) and create an API key
+3. Set an env variable for `export OPENAI_API_KEY=your-api-key` in your `.bashrc` or `.bash_profile`
+4. In this repo's root directory, run `make`
+5. The app will open in a new browser tab at `http://localhost:5009` (you may need to refresh after a few seconds)
 
 ## About
 
