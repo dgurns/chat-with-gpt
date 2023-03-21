@@ -59,10 +59,8 @@ export default function ChatPage(props: any) {
 		const container = document.querySelector('#messages') as HTMLElement;
 		const totalScrollHeight = container.scrollHeight - container.offsetHeight;
 		const currentScrollPosition = container.scrollTop;
-		const currentScrollIsNearBottom =
-			currentScrollPosition > totalScrollHeight - 150;
 
-		if (latestMessageLength && currentScrollIsNearBottom) {
+		if (latestMessageLength) {
 			container?.scrollTo({ top: totalScrollHeight, behavior: 'smooth' });
 		}
 	}, [
