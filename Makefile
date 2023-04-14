@@ -13,3 +13,7 @@ stop:
 .PHONY: down
 down:
 	docker-compose down
+
+.PHONY: clean
+clean: down
+	docker image rm chat-with-gpt-app
