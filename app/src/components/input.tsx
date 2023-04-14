@@ -353,6 +353,20 @@ export default function MessageInput(props: MessageInputProps) {
 						className="settings-button"
 						size="xs"
 						compact
+						onClick={() => window.location.replace(window.location.origin)}
+					>
+						<span>
+							<FormattedMessage
+								defaultMessage={'Reset'}
+								description="Label for the button that resets the current chat"
+							/>
+						</span>
+					</Button>
+					<Button
+						variant="subtle"
+						className="settings-button"
+						size="xs"
+						compact
 						onClick={onCustomizeSystemPromptClick}
 					>
 						<span>

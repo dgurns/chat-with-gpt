@@ -56,9 +56,19 @@ export default function ChatPage(props: any) {
 
 		const container = document.querySelector('#messages') as HTMLElement;
 		const totalScrollHeight = container.scrollHeight - container.offsetHeight;
+		let timeout;
 		if (latestMessageLength > 0) {
-			container.scrollTo({ top: totalScrollHeight, behavior: 'smooth' });
+			timeout = setTimeout(
+				() =>
+					container.scrollTo({ top: totalScrollHeight, behavior: 'smooth' }),
+				100
+			);
 		}
+		return () => {
+			if (timeout) {
+				clearTimeout(timeout);
+			}
+		};
 	}, [
 		context.currentChat?.chatLoadedAt,
 		props.share,
